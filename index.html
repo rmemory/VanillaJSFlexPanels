@@ -10,7 +10,10 @@
 		
 	html {
 		/* border-box means child elements width and height are calculated relative to their parent
-			 and not the screen */
+			 and not the screen. The following URL provides a good explanation: 
+
+			 https://css-tricks.com/box-sizing/
+		 */
 	  box-sizing: border-box;
 	  background:#ffc600;
 	  font-family:'helvetica neue';
@@ -259,7 +262,7 @@
 	  function toggleOpenActive(e) {
 			/* Safari transitionend event.propertyName === flex */
 	  	/* Chrome + FF transitionend event.propertyName === flex-grow */
-			/* Hence the usage of 'includes' and not equality for 'flex-grow' */
+			/* Hence the usage of 'includes' and not equality for 'flex-grow'. */
 		  if (e.propertyName.includes('flex')) {
 			  this.classList.toggle('open-active');
 		  }
