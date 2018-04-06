@@ -2,124 +2,214 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Vanilla JS Flex Panels 💪</title>
+  <title>Vanilla JS Flex Panels 💪 &#128169;</title>
   <link href='https://fonts.googleapis.com/css?family=Amatic+SC' rel='stylesheet' type='text/css'>
 </head>
 <body>
   <style>
+		
 	html {
+		/* border-box means child elements width and height are calculated relative to their parent
+			 and not the screen */
 	  box-sizing: border-box;
 	  background:#ffc600;
 	  font-family:'helvetica neue';
+		/* This font-size is only used as a baseline for em units */
 	  font-size: 20px;
 	  font-weight: 200;
 	}
+
 	body {
 	  margin: 0;
 	}
+
+	/* 
+	 * This provides some global styling to pretty much everything
+	 */
 	*, *:before, *:after {
+		/* default content attribute */
+		content: "";
+		
+		/* box-sizing is not inherited by default */
 	  box-sizing: inherit;
 	}
 
+	/* 
+	 * This class is used on the parent of all panels 
+	 */
 	.panels {
 	  min-height:100vh;
+		/* No scroll bar, which doesn't show up but this guarantees it won't show up */ 
 	  overflow: hidden;
-	  display: flex; /* All children will be flex items */
+		
+		/* All .panel children will be flex items, and they will be drawn (stacked)
+		   horizontally, as per the flex-direction default not specified here. 
+			 Without this, the divs would be drawn vertically. This causes horizontal. */
+	  display: flex;
 	}
 
+	/* 
+	 * Default styling for each panel 
+	 */
 	.panel {
 	  background:#6B0F9C;
+		/* Each panel will have a slight border shadow around it, nice and stylish */
 	  box-shadow:inset 0 0 0 5px rgba(255,255,255,0.1);
 	  color:white;
 	  text-align: center;
-	  /* Safari transitionend event.propertyName === flex */
-	  /* Chrome + FF transitionend event.propertyName === flex-grow */
-
-	  /* This transition is applied when we add classes that affect the font-size, flex, and background
-		 to transition according to the transforms applied, as well as these properties. */
+	  
+	  /* This transition property is applied when we add classes that affect the 
+		 * font-size, flex, and background. Or stated differently, when the 
+		 * open and open-active classes are applied dynamically */
 	  transition:
-		font-size 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
-		flex 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
-		background 0.2s;
-	  font-size: 20px;
-	  background-size:cover;
-	  background-position:center;
-	  /* Each panel (flex item) will take as much space as you need, 
-		 evenly distributed between each panel */
-	  flex: 1; 
-	  justify-content: center;
-	  align-items:center;
+			font-size 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+			flex 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+			background 0.2s;
 
-	  /* All children are also flex items, vertically stacked */
+	  font-size: 20px;
+	  
+		background-size:cover;
+	  background-position:center;
+	  
+		/* Each panel (ie. each flex item) will take as much space as needed, 
+			 with the overall space evenly distributed between each panel (by default).
+			 Note each panel will dynamically take up more space when it is clicked on. 
+			 This is just the default value. Without this value (and without any of 
+			 the dynamic sizing), each panel would be tightly squished into a tiny 
+			 amount of room on the screen, no larger than the text in each panel. This
+			 value provides equal spacing of each panel regardless of what its children
+			 need. */
+	  flex: 1; 
+
+	  /* All children of a panel (paragraphs, etc) are also flex items, vertically 
+			(column) stacked */
 	  display: flex;
 	  flex-direction: column;
+
+		/* The "flex" way of centering the flex children vertically and horizontally */
+		justify-content: center;
+	  align-items:center;
 	}
 
+	/* 
+	 * Background images for each panel 
+	 */
 	.panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
 	.panel2 { background-image:url(https://source.unsplash.com/rFKUFzjPYiQ/1500x1500); }
 	.panel3 { background-image:url(https://images.unsplash.com/photo-1465188162913-8fb5709d6d57?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&w=1500&h=1500&fit=crop&s=967e8a713a4e395260793fc8c802901d); }
 	.panel4 { background-image:url(https://source.unsplash.com/ITjiVXcwVng/1500x1500); }
 	.panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
 
-	/* All elements that are a child of a panel */
+	/* 
+	 * Styling for all ('*') elements that are an immediate ('>') child of a panel 
+	 */
 	.panel > * {
 	  margin:0;
+
+		/* width here means it takes up 100% of the width of its own space as a flex item */
 	  width: 100%;
-	  transition:transform 0.5s;
-	  /* border: 1px solid red; for test only */
+
+		/* Do any transforms (such as translateX/Y) linearly, over a half second time.
+			 This transition must be here instead of above for reasons I don't fully 
+			 understand. My guess is the transform inheritance is limited by specificity. */
+	  transition:
+			transform 0.5s; 
+	  
+		/* border: 1px solid red; for test only */
+
+		/* By default, each panel takes up the same space */
 	  flex: 1;
 
-	  /* All children are also flex items */
+	  /* All children are also flex items, centered vertically and horizontally */
 	  display: flex;
 	  justify-content: center;
 	  align-items: center;
 	}
 
-	/* By default, the first paragraph in each panel will be off the top 
-	   of the screen */
+	/*
+	 * Styling for all ('*') of the first (:first-child) immediate ('>') children of each
+	 * panel. 
+	 * 
+	 * By default, the first paragraph in each panel will be off the top 
+	 * of the screen. 
+	 */
 	.panel > *:first-child {
 		transform: translateY(-100%);
 	}
-	/* When we add an oopen-active class to the element with a panel, it will bring 
-	   the paragraph back into its normal position on screen */
+
+	/* 
+	 * A style for 'when we add an open-active class to a panel' for the first-child
+	 * of a panel. 
+	 * 
+	 * The open-active class will be applied dynamically via JS. When applied it will 
+	 * cause the text from the first paragraph (which by default is off the screen
+	 * as mentioned in the rule above) tp be brought back to its default position, 
+	 * on screen. When the open-active class is applied, the translate 
+	   the paragraph back into its normal position on screen. As shown in the JS code,
+		 this class is typically (always) applied at the end of the transition, meaning
+		 the text moves back into location at the end of all of the transitions. */
 	.panel.open-active > *:first-child {
 		transform: translateY(0);
 	}
 
-	/* By default, the last paragraph in each panel will be off the bottom 
-	   of the screen */
+	/*
+	 * Styling for all ('*') of the last (:last-child) immediate ('>') children of each
+	 * panel. 
+	 *
+	 * By default, the last paragraph in each panel will be off the bottom 
+	 * of the screen 
+	 */
 	   .panel > *:last-child {
 		transform: translateY(100%);
 	}
-	/* When we add an open-active class to the element with a panel, it will bring 
-	   the paragraph back into its normal position on screen */
+
+	/* 
+	 * A style for 'when we add an open-active class to a panel' for the last-child
+	 * of a panel. 
+	 * 
+	 * It will bring the last paragraph back into its normal position on screen 
+	 */
 	.panel.open-active > *:last-child {
 		transform: translateY(0);
 	}	
 
-	/* All paragraph elements that are children of a panel */
+	/* 
+	 * Static styling for all paragraph elements that are descendents of a panel 
+	 */
 	.panel p {
 	  text-transform: uppercase;
 	  font-family: 'Amatic SC', cursive;
 	  text-shadow:0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
+		/* This font-size will end up only being applied to the first and last
+			 paragraphs, making them 2x smaller than the middle paragraph. */
 	  font-size: 2em;
 	}
 
-	/* Second paragraph that is a child of a panel */
+	/* 
+	 * Static styling for the second paragraph that is a child of a panel 
+	 */
 	.panel p:nth-child(2) {
+		/* Make the font-size of the second (middle) paragraph 4x larger,
+		   which is scaled even larger when the panel is open. */
 	  font-size: 4em;
 	}
 
-	/* When we add an open class to a panel, it will make the font-size be 40px. */
+	/* 
+	 * Style for 'when we dynamically add an open class to a panel' 
+	 */
 	.panel.open {
-	  flex: 5; /* An open panel will take 5x the space as the other children */
+	  flex: 5; /* An open panel will take 5x the space as the other children. 
+							  Note this still allows multiple panels to be 'open' at the same
+								time as each other. Flex just handles it. */
+
+		/* A larger baseline font size to scale up to during the transform, when
+			 each panel is open. */ 
 	  font-size:40px;
 	}
-
   </style>
 
-
-  <div class="panels">
+	<!-- Our first HTML!! -->
+	<div class="panels">
 	<div class="panel panel1">
 	  <p>Hey</p>
 	  <p>Let's</p>
@@ -147,21 +237,40 @@
 	</div>
   </div>
 
-  <script>
+	<!-- The Java script!! -->
+	<script>
+		/* Get all panel classes as a Node List */
 	  const panels = document.querySelectorAll('.panel');
 
+		/* 
+		 * function: toggleOpen
+		 */
 	  function toggleOpen() {
 		  this.classList.toggle('open')
 	  }
 
-	  function toggleActive(e) {
+		/* 
+		 * function: toggleOpenActive
+		 * 
+		 * We could look for any number of transitionend events to look for, 
+		 * but just chose the flex-grow, which happens to be different on
+		 * Safari.
+		 */
+	  function toggleOpenActive(e) {
+			/* Safari transitionend event.propertyName === flex */
+	  	/* Chrome + FF transitionend event.propertyName === flex-grow */
+			/* Hence the usage of 'includes' and not equality for 'flex-grow' */
 		  if (e.propertyName.includes('flex')) {
 			  this.classList.toggle('open-active');
 		  }
 	  }
 
+		/* Makes the panels larger */
 	  panels.forEach(panel => panel.addEventListener('click', toggleOpen));
-	  panels.forEach(panel => panel.addEventListener('transitionend', toggleActive));
+
+		/* Brings the text in from top and bottom after all of the transitions 
+			 have completed */
+	  panels.forEach(panel => panel.addEventListener('transitionend', toggleOpenActive));
 
   </script>
 
