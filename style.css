@@ -1,0 +1,225 @@
+html {
+	/* border-box means child elements width and height are calculated relative to their parent
+	   and not the screen. The following URL provides a good explanation: 
+
+	   https://css-tricks.com/box-sizing/
+	 */
+  box-sizing: border-box;
+  background:#ffc600;
+  font-family:'helvetica neue';
+	/* This font-size is only used as a baseline for rem units */
+  font-size: 20px;
+  font-weight: 200;
+}
+
+body {
+  margin: 0;
+}
+
+/* 
+ * This provides some global styling to pretty much everything
+ *
+ * :before is defined as the first child of a selected element.
+ * :after is the defined as the last child of a selected element.
+ * 
+ * Usage of the * just means literally everything.
+ */
+*, *:before, *:after {
+	/* default content attribute, which insures that nothing is 
+	   inserted before or after the selected element */
+	content: "";
+	
+	/* box-sizing is not inherited by default */
+  box-sizing: inherit;
+}
+
+/* 
+ * This class is used on the parent of all panels 
+ */
+.panels {
+	/* The usage of min-height is what causes all of the panels to stretch the 
+	   height of the screen */
+	min-height:100vh;
+
+	/* No scroll bar, which doesn't show up but this guarantees it won't show up */ 
+	overflow: hidden;
+	
+	/* All .panel children will be flex items, and they will be drawn (stacked)
+	   horizontally, as per the flex-direction default not specified here. 
+	   Without this, the divs would be drawn vertically. */
+	display: flex; /* main axis of children is horizontal, otherwise the panels
+					  would be stacked. */
+}
+
+/* 
+ * Default styling for each panel 
+ */
+.panel {
+	background:#6B0F9C;
+	
+	/* Each panel will have a slight border shadow around it, nice and stylish */
+	box-shadow:inset 0 0 0 5px rgba(255,255,255,0.1);
+	color:white;
+	text-align: center;
+
+	/* This transition property is applied when we add classes that affect the 
+	 * font-size, flex, and background. Or stated differently, when the 
+	 * open and open-active classes are applied dynamically */	
+	transition:
+		font-size 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+		flex 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+		background 0.2s;
+
+	font-size: 20px;
+
+	background-size:cover;
+	background-position:center;
+
+	/* Each panel (ie. each flex item) will take as much space as it needs (by default).
+	   The specification of flex: 1 here changes the default, and says, each item
+	   should take up all of the available space available in the parent, not just
+	   be limited by the amount of space requested by each child. The flex: 1 says, 
+	   the items will consume whatever the parent gives us. And since the parent 
+	   has no width specified, it means the entire width of the window is the default.
+
+	   Note each panel will dynamically take up more space when it is clicked on. 
+	   This is just the default value. Without this property (and without any of 
+	   the dynamic sizing), each panel would be tightly squished into a tiny 
+	   amount of room on the screen, no larger than the text in each panel. This
+	   value provides equal spacing of each panel regardless of the minimum it says
+	   it needs. */
+	flex: 1; 
+
+	/* All children of a panel (paragraphs, etc) are also flex items, vertically 
+	   (column) stacked */
+	display: flex;
+	flex-direction: column; /* main axis of children (paragraphs) is vertical */
+
+	/* The "flex" way of centering the flex children vertically and horizontally
+	   within its container */
+	justify-content: center;
+	align-items:center;
+}
+
+/* 
+ * Background images for each panel 
+ */
+.panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
+.panel2 { background-image:url(https://source.unsplash.com/rFKUFzjPYiQ/1500x1500); }
+.panel3 { background-image:url(https://images.unsplash.com/photo-1465188162913-8fb5709d6d57?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&w=1500&h=1500&fit=crop&s=967e8a713a4e395260793fc8c802901d); }
+.panel4 { background-image:url(https://source.unsplash.com/ITjiVXcwVng/1500x1500); }
+.panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
+
+/* 
+ * Styling for all ('*') elements that are an immediate ('>') child of a panel.
+ * All children in this case are paragrahs.
+ */
+.panel > * {
+	margin:0;
+
+	/* width here means it takes up 100% of the width of its own space as a flex item */
+	width: 100%;
+
+	/* Do any transforms (such as translateX/Y) linearly, over a half second time.
+	   This transition must be here instead of above for reasons I don't fully 
+	   understand. My guess is the transform inheritance is limited. */
+	transition:
+		transform 0.5s; 
+  
+	/* border: 1px solid red; uncomment for test only */
+
+	/* This is a "flex-item" property, which says by default, each panel takes up 
+	   the same space along its main axis */
+	flex: 1;
+
+	/* All children are also flex items, centered vertically and horizontally */
+	display: flex; /* main axis of children is horizontal */
+	justify-content: center;
+	align-items: center;
+}
+
+/*
+ * Styling for all ('*') of the first (:first-child) immediate ('>') children of each
+ * panel. All children in this case are paragraphs.
+ * 
+ * This means, by default or initially, the first paragraph in each panel will be off 
+ * the top of the screen. 
+ */
+.panel > *:first-child {
+	transform: translateY(-100%);
+}
+
+/* 
+ * A style for 'when we add an open-active class to a panel' for the first-child
+ * of a panel. 
+ * 
+ * The open-active class will be applied dynamically via JS. When applied it will 
+ * cause the text from the first paragraph (which by default is off the screen
+ * as mentioned in the rule above) tp be brought back to its default position, 
+ * on screen.
+ * 
+ * As shown in the JS code, this class is always applied at the end of the 
+ * transition, meaning the text moves into its "active" (on screen) location at the 
+ * end of all of the transitions. 
+ */
+.panel.open-active > *:first-child {
+	transform: translateY(0);
+}
+
+/*
+ * Styling for all ('*') of the last (:last-child) immediate ('>') children of each
+ * panel. 
+ *
+ * By default, the last paragraph in each panel will be off the bottom 
+ * of the screen 
+ */
+   .panel > *:last-child {
+	transform: translateY(100%);
+}
+
+/* 
+ * A style for 'when we add an open-active class to a panel' for the last-child
+ * of a panel. 
+ * 
+ * It will bring the last paragraph back into its normal position on screen 
+ */
+.panel.open-active > *:last-child {
+	transform: translateY(0);
+}	
+
+/* 
+ * Static styling for all paragraph elements that are descendents of a panel 
+ */
+.panel p {
+  text-transform: uppercase;
+  font-family: 'Amatic SC', cursive;
+  text-shadow:0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
+	/* This font-size is the default, but will end up only being applied to the 
+	   first and last paragraphs. In the end, the middle paragraph will be
+	   2x larger than the first and last paragraphs (which only appear when the
+	   panel is selected). See p:nth-child(2) below */
+  font-size: 2em;
+}
+
+/* 
+ * Static styling for the second paragraph that is a child of a panel 
+ */
+.panel p:nth-child(2) {
+	/* Make the font-size of the second (middle) paragraph 4x larger,
+	   which is scaled even larger when the panel is open. */
+  font-size: 4em;
+}
+
+/* 
+ * Style for an open class which is dynamically added by JS 
+ */
+.panel.open {
+	flex: 5; /* An open panel will take 5x the space as the other children. 
+				Note this still allows multiple panels to be 'open' at the same
+				time as each other. Flex just handles it. */
+
+	/* A larger baseline font size for all paragraphs when each panel is open. 
+	   Note that the middle paragraph is still 2x as large even though all three
+	   paragraphs get larger when the panel is open */ 
+  font-size:40px;
+}

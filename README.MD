@@ -1,4 +1,5 @@
-This project contains examples of vanilla JS operations on a Flex CSS layout. 
+This project contains examples of vanilla JS operations on a Flex CSS layout. It relies 
+heavily on CSS, Flex, transitions, and events from CSS.
 
 It originates from and is largely based on a tutorial from Wes Bos.
 
